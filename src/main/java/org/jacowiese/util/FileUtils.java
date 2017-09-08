@@ -22,9 +22,7 @@ public class FileUtils {
 		FileReader reader = new FileReader(filename);
 		
 		char[] buf = new char[1024];
-		int where = 0;
-		while (reader.read(buf, where, 1024) != -1) {
-			where += buf.length;
+		while (reader.read(buf, 0, 1024) != -1) {
 			tempStr.append(buf);
 		}
 		

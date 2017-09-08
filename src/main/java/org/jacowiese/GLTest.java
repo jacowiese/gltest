@@ -12,10 +12,11 @@ import org.lwjgl.glfw.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.Callbacks.*;
-import org.lwjgl.opengl.GL;
+import static org.lwjgl.opengl.GL.createCapabilities;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 /**
  *
@@ -55,7 +56,9 @@ public class GLTest {
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1);
         glfwShowWindow(window);
-		
+
+        createCapabilities();
+        
 	myShader = new Shader();
 	myShader.createVertexShader(FileUtils.loadResource("shaders/vertex.vs"));
 	myShader.createFragmentShader(FileUtils.loadResource("shaders/fragment.fs"));
@@ -64,9 +67,8 @@ public class GLTest {
 
     private void loop() {
 
-        GL.createCapabilities();
 
-        GL11.glClearColor(0.3f, 0.6f, 1.0f, 0.0f);
+        glClearColor(0.3f, 0.6f, 1.0f, 0.0f);
 
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
