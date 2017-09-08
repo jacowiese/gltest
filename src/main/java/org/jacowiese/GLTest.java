@@ -5,6 +5,8 @@
  */
 package org.jacowiese;
 
+import org.jacowiese.shader.Shader;
+import org.jacowiese.util.FileUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.*;
 
@@ -24,7 +26,9 @@ public class GLTest {
     // Window handle
     private long window;
 
-    private void init() {
+    private Shader myShader;
+    
+    private void init() throws Exception {
         System.setProperty("org.lwjgl.util.Debug", "true");
 
         GLFWErrorCallback.createPrint(System.err).set();
@@ -51,6 +55,11 @@ public class GLTest {
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1);
         glfwShowWindow(window);
+		
+	myShader = new Shader();
+	myShader.createVertexShader(FileUtils.loadResource("shaders/vertex.vs"));
+	myShader.createFragmentShader(FileUtils.loadResource("shaders/fragment.fs"));
+	myShader.link();
     }
 
     private void loop() {
@@ -62,15 +71,19 @@ public class GLTest {
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
+	    myShader.bind();
+	    
+	    myShader.unbind();
+	    
             glfwSwapBuffers(window);
-
             glfwPollEvents();
         }
 
     }
 
     private void destroy() {
-
+	myShader.cleanup();
+	    
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -80,7 +93,7 @@ public class GLTest {
         glfwSetErrorCallback(null).free();
     }
 
-    private void run() {
+    private void run() throws Exception {
         System.out.println(String.format("LWJGL %s.", Version.getVersion()));
 
         init();
@@ -89,7 +102,7 @@ public class GLTest {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new GLTest().run();
     }
 
