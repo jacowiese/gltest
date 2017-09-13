@@ -117,8 +117,8 @@ public class Shader {
 		}
 	}
 
-	public void setUniform(String uniformName, int textureSlot) {
-		glUniform1i(uniforms.get(uniformName), textureSlot);
+	public void setUniform(String uniformName, int value) {
+		glUniform1i(uniforms.get(uniformName), value);
 	}
 
 	protected int createShader(String shaderCode, int shaderType) throws Exception {

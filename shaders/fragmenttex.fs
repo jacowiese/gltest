@@ -1,11 +1,11 @@
 #version 330
 
-uniform sampler2D textureData;
-
 in vec2 outTexCoord;
 out vec4 fragColor;
 
+uniform sampler2D texture_sampler;
+
 void main() {
-	fragColor = texture2D(textureData, outTexCoord).rgba;
-//    fragColor = vec4(outTexCoord.x, outTexCoord.y, 1, 1);
+	fragColor = texture(texture_sampler, outTexCoord);
+	//fragColor = vec4(outTexCoord.x, outTexCoord.y, 1, 1);
 }
