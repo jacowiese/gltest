@@ -33,105 +33,162 @@ import static org.lwjgl.system.MemoryUtil.memFree;
  */
 public class Mesh {
 
-    private final int vaoId;
-    private final int vboId;
-    private final int iboId;
-    private final int colorVboId;
-    private int textureVboId;
+	private int vaoId;
+	private int vboId;
+	private int iboId;
+	private int colorVboId;
+	private int textureVboId;
 
-    private final boolean hasColor;
-    private final boolean hasTexture;
+	private boolean hasColor;
+	private boolean hasTexture;
 
-    private final int vertexCount;
-    private final int indexCount;
+	private int vertexCount;
+	private int indexCount;
 
-    public Mesh(float[] vertices, int[] indices, float[] colors) {
-        hasColor = true;
-        hasTexture = false;
+	public Mesh() {
+	}
 
-        vertexCount = vertices.length / 3;
-        indexCount = indices.length;
+	public void createMeshColored(float[] vertices, int[] indices, float[] colors) {
+		hasColor = true;
+		hasTexture = false;
 
-        // Create the VAO
-        vaoId = glGenBuffers();
-        glBindVertexArray(vaoId);
+		vertexCount = vertices.length / 3;
+		indexCount = indices.length;
 
-        // Create the vertex buffer
-        FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
-        verticesBuffer.put(vertices).flip();
+		// Create the VAO
+		vaoId = glGenBuffers();
+		glBindVertexArray(vaoId);
 
-        vboId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        memFree(verticesBuffer);
+		// Create the vertex buffer
+		FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
+		verticesBuffer.put(vertices).flip();
 
-        // Create the index buffer
-        IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
-        indicesBuffer.put(indices).flip();
+		vboId = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+		glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		memFree(verticesBuffer);
 
-        iboId = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
-        glIndexPointer(4, indicesBuffer);
-    //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        memFree(indicesBuffer);
+		// Create the index buffer
+		IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
+		indicesBuffer.put(indices).flip();
 
-        // Create the color buffer
-        FloatBuffer colorBuffer = MemoryUtil.memAllocFloat(colors.length);
-        colorBuffer.put(colors).flip();
+		iboId = glGenBuffers();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+		glIndexPointer(4, indicesBuffer);
+		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		memFree(indicesBuffer);
 
-        colorVboId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, colorVboId);
-        glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        memFree(colorBuffer);
+		// Create the color buffer
+		FloatBuffer colorBuffer = MemoryUtil.memAllocFloat(colors.length);
+		colorBuffer.put(colors).flip();
 
-        // Unbind the VAO
-        glBindVertexArray(0);
-    }
+		colorVboId = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, colorVboId);
+		glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		memFree(colorBuffer);
 
-    public void draw() {
-        // Bind to the VAO
-        glBindVertexArray(vaoId);
-        glEnableVertexAttribArray(0); // Vertex data
-        if (hasColor) {
-            glEnableVertexAttribArray(1); // Color data
-        }
+		// Unbind the VAO
+		glBindVertexArray(0);
+	}
 
-        // Draw the vertices
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	public void createMeshTextured(float[] vertices, int[] indices, float[] texcoords) {
+		hasColor = false;
+		hasTexture = true;
 
-        // Restore state
-        glDisableVertexAttribArray(0);
-        if (hasColor) {
-            glDisableVertexAttribArray(1);
-        }
-        glBindVertexArray(0);
-    }
+		vertexCount = vertices.length / 3;
+		indexCount = indices.length;
 
-    public void cleanup() {
-        glDisableVertexAttribArray(0);
+		// Create the VAO
+		vaoId = glGenBuffers();
+		glBindVertexArray(vaoId);
 
-        // Delete the vbos
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(vboId);
-        glDeleteBuffers(iboId);
+		// Create the vertex buffer
+		FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
+		verticesBuffer.put(vertices).flip();
 
-        // Delete the vao
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vaoId);
-        if (hasColor) {
-            glDisableVertexAttribArray(1);
-            glDeleteBuffers(colorVboId);
-        }
+		vboId = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+		glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		memFree(verticesBuffer);
 
-        if (hasTexture) {
+		// Create the index buffer
+		IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
+		indicesBuffer.put(indices).flip();
 
-        }
+		iboId = glGenBuffers();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+		glIndexPointer(4, indicesBuffer);
+		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		memFree(indicesBuffer);
 
-    }
+		// Create the texture buffer
+		FloatBuffer texcoordBuffer = MemoryUtil.memAllocFloat(texcoords.length);
+		texcoordBuffer.put(texcoords).flip();
+
+		textureVboId = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, textureVboId);
+		glBufferData(GL_ARRAY_BUFFER, texcoordBuffer, GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		memFree(texcoordBuffer);
+
+		// Unbind the VAO
+		glBindVertexArray(0);
+	}
+
+	public void draw() {
+		// Bind to the VAO
+		glBindVertexArray(vaoId);
+		glEnableVertexAttribArray(0); // Vertex data
+		if (hasColor) {
+			glEnableVertexAttribArray(1); // Color data
+		}
+		if (hasTexture) {
+			glEnableVertexAttribArray(1);
+		}
+
+		// Draw the vertices
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+
+		// Restore state
+		glDisableVertexAttribArray(0);
+		if (hasColor) {
+			glDisableVertexAttribArray(1);
+		}
+		if (hasTexture) {
+			glDisableVertexAttribArray(1);
+		}
+		glBindVertexArray(0);
+	}
+
+	public void cleanup() {
+		glDisableVertexAttribArray(0);
+
+		// Delete the vbos
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDeleteBuffers(vboId);
+		glDeleteBuffers(iboId);
+
+		// Delete the vao
+		glBindVertexArray(0);
+		glDeleteVertexArrays(vaoId);
+		if (hasColor) {
+			glDisableVertexAttribArray(1);
+			glDeleteBuffers(colorVboId);
+		}
+		if (hasTexture) {
+			glDisableVertexAttribArray(1);
+			glDeleteBuffers(textureVboId);
+		}
+
+	}
 
 }
